@@ -27,9 +27,6 @@ https://github.com/furlongm/openvpn-monitor/
 OpenvpnManagement
 Class to manage connection and commands to the OpenVPN management console (via TCP/IP or unix socket)
 
-Requirements:
-    regex
-
 Args:
     host (str, default: localhost):     IP address where management console listen
     port (int, default: 5555):          TCP port to connect to
@@ -38,6 +35,9 @@ Args:
     name (str, default: None):          Name give to the OpenVPN instance
     mute (bool, default: False):        Suppress info messages to stdout/stderr
     debug (bool, default: False):       Enable debug messages to stdout/stderr
+
+Requirements:
+    * regex
 """
 
 

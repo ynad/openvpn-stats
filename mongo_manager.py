@@ -24,9 +24,6 @@ v0.0.2
 MongoManager
 Class to manage mongodb operations
 
-Requirements:
-    pymongo
-
 Args:
     ip (str):                                           IP address of mongodb server
     port (int):                                         TCP port of mongodb server
@@ -35,7 +32,11 @@ Args:
     password (str, default: None):                      password for authentication to mongodb server
     authSource (str, default: 'admin'):                 mongodb database source for user authentication
     authMechanism (str, default: 'SCRAM-SHA-256'):      mongodb authentication mechanism
+
+Requirements:
+    * pymongo
 """
+
 
 import logging
 import os
