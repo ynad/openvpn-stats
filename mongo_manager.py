@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 # Copyright 2024 Daniele Vercelli - ynad <info@danielevercelli.it>
+# https://github.com/ynad/openvpn-stats
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,25 +19,13 @@
 mongo_manager.py
 2024-10-07
 v0.0.2
-"""
-
-import logging
-import os
-import shutil
-import tarfile
-from datetime import datetime
-from pymongo import MongoClient
-from bson.json_util import dumps
 
 
+MongoManager
+Class to manage mongodb operations
 
-# logger
-logger = logging.getLogger(__name__)
-
-
-
-"""
-MongoManager: It is a class which is useful to manage mongodb operations.
+Requirements:
+    pymongo
 
 Args:
     ip (str):                                           IP address of mongodb server
@@ -47,6 +36,20 @@ Args:
     authSource (str, default: 'admin'):                 mongodb database source for user authentication
     authMechanism (str, default: 'SCRAM-SHA-256'):      mongodb authentication mechanism
 """
+
+import logging
+import os
+import shutil
+import tarfile
+from datetime import datetime
+from bson.json_util import dumps
+from pymongo import MongoClient
+
+
+
+# logger
+logger = logging.getLogger(__name__)
+
 
 
 class MongoManager():
