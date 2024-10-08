@@ -1,3 +1,41 @@
+# logs tmp work folder
+logs/
+# to avoid commiting key files
+*.json
+# skip log files
+*.log
+*.log.*
+# png files
+*.png
+# cvs files
+*.csv
+# bck files
+*.bck
+
+# custom ignore
+*.xls
+*.xlsx
+*.list
+
+# skip PID file
+*.pid
+
+# venv dir
+.venv*
+
+# backup folder
+backups/
+backup_json/
+
+# tmp folder
+temp/
+tmp/
+
+# sublime stuff
+*.sublime-project
+*.sublime-workspace
+*.sublime/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
