@@ -84,8 +84,8 @@ Requirements:
     * click
 
 Custom required libraries:
-    * mongo_manager
-    * openvpn_management
+    * mongo_manager (requires: pymongo)
+    * openvpn_management (requires: regex)
 """
 
 
@@ -93,8 +93,8 @@ import json
 import sys
 import os
 import logging
-import click
 import signal
+import click
 from datetime import datetime
 from time import sleep
 
