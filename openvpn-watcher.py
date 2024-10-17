@@ -17,8 +17,8 @@
 
 """
 openvpn-watcher.py
-2024-10-08
-v0.0.3
+2024-10-17
+v0.0.4
 
 
 OpenVPN-Watcher
@@ -94,6 +94,7 @@ import sys
 import os
 import logging
 import click
+import signal
 from datetime import datetime
 from time import sleep
 
@@ -118,8 +119,14 @@ settings_socket_json='settings_console.json'
 
 
 
+def signal_handler(signum: int, frame):
+    print(f"SIGNAL {signum} received, exiting gracefully, at frame {frame}")
+    logger.info(f"SIGNAL {signum} received, exiting gracefully, at frame {frame}")
+    sys.exit(0)
+
+
 # load db credentials
-def load_database_settings(settings_database_json) -> dict:
+def load_database_settings(settings_database_json: str) -> dict:
     if not os.path.exists(settings_database_json):
         logger.error(f"Missing database settings file: {settings_database_json}")
         raise Exception('Missing database settings file')
@@ -130,7 +137,7 @@ def load_database_settings(settings_database_json) -> dict:
 
 
 # load db credentials
-def load_socket_settings(settings_socket_json) -> dict:
+def load_socket_settings(settings_socket_json: str) -> dict:
     if not os.path.exists(settings_socket_json):
         logger.error(f"Missing socket settings file: {settings_socket_json}")
         raise Exception('Missing socket settings file')
@@ -353,12 +360,17 @@ def main(db_ip: str, db_port: int, db: str, db_user: str, db_pw: str,   # databa
     db_user = db_user if db_user else db_settings['user']
     db_pw = db_pw if db_pw else db_settings['pwd']
 
+
+    # Register the signal handler
+    signal.signal(signal.SIGTERM, signal_handler)
+
     # start mongo handler
     mongo_client = MongoManager(db_ip, db_port, db, username=db_user, password=db_pw)
 
 
     if not mute:
         print(f"=== OpenVPN-stats ===")
+
     # custom sleep time
     if wait:
         try:
@@ -371,11 +383,13 @@ def main(db_ip: str, db_port: int, db: str, db_user: str, db_pw: str,   # databa
         except (ValueError, AssertionError):
             print(f"Wrong wait time value, must be an integer expressing seconds between 1s and 24h: {wait}")
             raise ValueError('Wrong wait time value')
+
     # default loop wait time
     elif loop:
         sleep_t = 60
         if not mute:
             print(f"Sleep time default: {sleep_t}\n")
+
     # single run
     else:
         if not mute:
@@ -422,6 +436,10 @@ def main(db_ip: str, db_port: int, db: str, db_user: str, db_pw: str,   # databa
                 print("KeyboardInterrupt received")
             logger.info("KeyboardInterrupt received")
 
+        except Exception as exc:
+            print(f"Exception in socket mode: {repr(exc)}")
+            logger.warning(f"Exception in socket mode: {repr(exc)}")
+
         finally:
             # close socket
             ovpn_manag.socket_disconnect()
@@ -435,20 +453,30 @@ def main(db_ip: str, db_port: int, db: str, db_user: str, db_pw: str,   # databa
             print(f"Status file not found: {logfile}")
             raise FileNotFoundError(logfile)
 
-        # loop
-        while True:
-            # read status from file
-            status_content = read_status_file(logfile)
+        try:
+            # loop
+            while True:
+                # read status from file
+                status_content = read_status_file(logfile)
 
-            # parse status content, log eventual data
-            parse_status(status_content, mute)
+                # parse status content, log eventual data
+                parse_status(status_content, mute)
 
-            # break while on single run
-            if not loop:
-                break
+                # break while on single run
+                if not loop:
+                    break
 
-            # sleep between while loop
-            sleep(sleep_t)
+                # sleep between while loop
+                sleep(sleep_t)
+
+        except KeyboardInterrupt:
+            if not mute:
+                print("KeyboardInterrupt received")
+            logger.info("KeyboardInterrupt received")
+
+        except Exception as exc:
+            print(f"Exception in status file mode: {repr(exc)}")
+            logger.warning(f"Exception in status file mode: {repr(exc)}")
 
 
 
