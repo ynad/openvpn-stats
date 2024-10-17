@@ -115,7 +115,7 @@ logging.basicConfig(filename="./debug.log",
 
 # global settings
 settings_database_json='settings_database.json'
-settings_socket_json='settings_console.json'
+settings_console_json='settings_console.json'
 
 
 
@@ -137,13 +137,13 @@ def load_database_settings(settings_database_json: str) -> dict:
 
 
 # load db credentials
-def load_socket_settings(settings_socket_json: str) -> dict:
-    if not os.path.exists(settings_socket_json):
-        logger.error(f"Missing socket settings file: {settings_socket_json}")
-        raise Exception('Missing socket settings file')
+def load_console_settings(settings_console_json: str) -> dict:
+    if not os.path.exists(settings_console_json):
+        logger.error(f"Missing console settings file: {settings_console_json}")
+        raise Exception('Missing console settings file')
 
-    logger.debug("Loading socket json settings from file: " + str(settings_socket_json))
-    with open(settings_socket_json, 'r') as f:
+    logger.debug("Loading console json settings from file: " + str(settings_console_json))
+    with open(settings_console_json, 'r') as f:
         return json.load(f)
 
 
@@ -317,7 +317,7 @@ def parse_status(status_content: list, mute: bool) -> None:
     default="/etc/openvpn/openvpn-status.log"
 )
 @click.option(
-    "--socket",
+    "--console",
     is_flag=True
 )
 @click.option(
@@ -347,7 +347,7 @@ def parse_status(status_content: list, mute: bool) -> None:
 def main(db_ip: str, db_port: int, db: str, db_user: str, db_pw: str,   # database parameters
         mute: bool, debug: bool, loop: bool, wait: int,                 # misc settings
         log: str,                                                       # status via log file
-        socket: bool, host: str, port: int, password: str, name: str,   # status via socket connection to OpenVPN management interface          
+        console: bool, host: str, port: int, password: str, name: str,  # status via console connection to OpenVPN management interface          
     ):
 
     global mongo_client
@@ -396,13 +396,13 @@ def main(db_ip: str, db_port: int, db: str, db_user: str, db_pw: str,   # databa
             print("Single run\n")
 
 
-    # openvpn management interface via socket
-    if socket:
-        socket_settings = load_socket_settings(settings_socket_json)
-        sck_host = host if host else socket_settings['host']
-        sck_port = port if port else socket_settings['port']
-        sck_password = password if password else socket_settings['password']
-        sck_name = name if name else socket_settings['name']
+    # openvpn management interface via console
+    if console:
+        console_settings = load_console_settings(settings_console_json)
+        sck_host = host if host else console_settings['host']
+        sck_port = port if port else console_settings['port']
+        sck_password = password if password else console_settings['password']
+        sck_name = name if name else console_settings['name']
 
         # openvpn management interface
         ovpn_manag = OpenvpnManagement(host=sck_host,
@@ -437,8 +437,8 @@ def main(db_ip: str, db_port: int, db: str, db_user: str, db_pw: str,   # databa
             logger.info("KeyboardInterrupt received")
 
         except Exception as exc:
-            print(f"Exception in socket mode: {repr(exc)}")
-            logger.warning(f"Exception in socket mode: {repr(exc)}")
+            print(f"Exception in console mode: {repr(exc)}")
+            logger.warning(f"Exception in console mode: {repr(exc)}")
 
         finally:
             # close socket
