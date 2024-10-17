@@ -1,9 +1,10 @@
 # openvpn-stats
-Collection of scripts to analyze openvpn logs and connection status
+Collection of scripts to analyze openvpn logs and connection status.
 
 ## Requirements
 - Python > 3.7 is required. Tested with python 3.10.12 and 3.11.2 with virtual env.
 - A working MongoDB instance is needed for some advanced scripts, tested up to version 6.0.18 Community Edition.
+- `screen` if you want to run scripts in a screen virtual terminal.
 - Python required packages are listed in the file `requirements.txt`.
   To install them simply run the following:
 ```
@@ -55,6 +56,18 @@ Then create the JSON file `settings_console.json` as follows, with the appropria
 
 ## Usage
 Usage of each script is described in script's comments.
+
+## Run script as service at startup
+Example systemd service config files are included. Adapt to your configuration and save as:
+```
+/etc/systemd/system/my-openvpn-script.service
+```
+To run and enable use the standard systemd commands:
+```
+systemctl restart my-openvpn-script.service
+systemctl status my-openvpn-script.service
+systemctl enable my-openvpn-script.service
+```
 
 ## License
 Released under GPL-3.0 license.
