@@ -1,0 +1,20 @@
+[Unit]
+Description=OpenVPN-watcher python script
+After=network.target
+
+[Service]
+Type=simple
+User=your-user
+# with python virtual env (venv)
+ExecStart=/home/your-user/openvpn-stats/.venv/bin/python3 /home/your-user/openvpn-stats/openvpn-watcher.py --loop
+# without venv
+#ExecStart=/usr/bin/python3 /home/your-user/openvpn-stats/openvpn-watcher.py --loop
+# ExecStop not needed, systemd sends SIGTERM signal to the process 
+#ExecStop=
+KillMode=control-group
+TimeoutStopSec=20
+WorkingDirectory=/home/your-user/openvpn-stats
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

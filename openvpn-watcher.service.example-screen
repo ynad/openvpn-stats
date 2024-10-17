@@ -1,0 +1,19 @@
+[Unit]
+Description=OpenVPN-watcher python script in screen session
+After=network.target
+
+[Service]
+Type=simple
+User=your-user
+# with python virtual env (venv)
+ExecStart=/usr/bin/screen -DmS vpn-watcher /home/your-user/openvpn-stats/.venv/bin/python3 /home/your-user/openvpn-stats/openvpn-watcher.py --loop
+# without venv
+#ExecStart=/usr/bin/screen -DmS vpn-watcher /usr/bin/python3 /home/your-user/openvpn-stats/openvpn-watcher.py --loop
+ExecStop=/usr/bin/screen -S vpn-watcher -X stuff "^C" ; sleep 1
+KillMode=control-group
+TimeoutStopSec=20
+WorkingDirectory=/home/your-user/openvpn-stats
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
