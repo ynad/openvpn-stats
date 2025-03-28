@@ -17,8 +17,8 @@
 
 """
 openvpn-watcher.py
-2024-10-17
-v0.0.4
+2025-03-28
+v0.0.5
 
 
 OpenVPN-Watcher
@@ -121,7 +121,7 @@ settings_console_json='settings_console.json'
 
 def signal_handler(signum: int, frame):
     print(f"SIGNAL {signum} received, exiting gracefully, at frame {frame}")
-    logger.info(f"SIGNAL {signum} received, exiting gracefully, at frame {frame}")
+    logger.warning(f"SIGNAL {signum} received, exiting gracefully, at frame {frame}")
     sys.exit(0)
 
 
@@ -131,7 +131,7 @@ def load_database_settings(settings_database_json: str) -> dict:
         logger.error(f"Missing database settings file: {settings_database_json}")
         raise Exception('Missing database settings file')
 
-    logger.debug("Loading database json settings from file: " + str(settings_database_json))
+    logger.info("Loading database json settings from file: " + str(settings_database_json))
     with open(settings_database_json, 'r') as f:
         return json.load(f)
 
@@ -142,7 +142,7 @@ def load_console_settings(settings_console_json: str) -> dict:
         logger.error(f"Missing console settings file: {settings_console_json}")
         raise Exception('Missing console settings file')
 
-    logger.debug("Loading console json settings from file: " + str(settings_console_json))
+    logger.info("Loading console json settings from file: " + str(settings_console_json))
     with open(settings_console_json, 'r') as f:
         return json.load(f)
 
@@ -441,7 +441,7 @@ def main(db_ip: str, db_port: int, db: str, db_user: str, db_pw: str,   # databa
         except KeyboardInterrupt:
             if not mute:
                 print("KeyboardInterrupt received")
-            logger.info("KeyboardInterrupt received")
+            logger.warning("KeyboardInterrupt received")
 
         except Exception as exc:
             print(f"Exception in console mode: {repr(exc)}")
@@ -479,7 +479,7 @@ def main(db_ip: str, db_port: int, db: str, db_user: str, db_pw: str,   # databa
         except KeyboardInterrupt:
             if not mute:
                 print("KeyboardInterrupt received")
-            logger.info("KeyboardInterrupt received")
+            logger.warning("KeyboardInterrupt received")
 
         except Exception as exc:
             print(f"Exception in status file mode: {repr(exc)}")
