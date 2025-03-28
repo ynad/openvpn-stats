@@ -162,6 +162,7 @@ def read_status_file(status_file: str) -> list:
 def parse_status(status_content: list, mute: bool) -> None:
     client_section = False
     routes_section = False
+    stats_time = None
     clients_list = {}
 
     for line in status_content:
@@ -246,6 +247,12 @@ def parse_status(status_content: list, mute: bool) -> None:
             client_datetime = datetime.strptime(last_conn, '%Y-%m-%d %H:%M:%S')
 
             if client_cname in clients_list:
+                # workaround for DCO breaking last ping time ~equal to start connection time
+                # use stats time instead, which is likely closer to real last ping time
+                if (client_datetime - clients_list[client_cname]['start']) < 20:
+                    last_conn = stats_time
+                    client_datetime = datetime.strptime(stats_time, '%Y-%m-%d %H:%M:%S')
+
                 conn_seconds = client_datetime - clients_list[client_cname]['start']
                 clients_list[client_cname]['last'] = client_datetime
                 clients_list[client_cname]['seconds'] = int(conn_seconds.total_seconds())
