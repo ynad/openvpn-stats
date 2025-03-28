@@ -95,7 +95,7 @@ import os
 import logging
 import signal
 import click
-from datetime import datetime
+from datetime import datetime, timedelta
 from time import sleep
 
 # custom libs import
@@ -249,7 +249,8 @@ def parse_status(status_content: list, mute: bool) -> None:
             if client_cname in clients_list:
                 # workaround for DCO breaking last ping time ~equal to start connection time
                 # use stats time instead, which is likely closer to real last ping time
-                if (client_datetime - clients_list[client_cname]['start']) < 20:
+                if (client_datetime - clients_list[client_cname]['start']) < timedelta(seconds=10):
+                    logger.info(f"workaround DCO, using stats_time {stats_time}, instead of bogus client_datetime: {client_datetime}")
                     last_conn = stats_time
                     client_datetime = datetime.strptime(stats_time, '%Y-%m-%d %H:%M:%S')
 
