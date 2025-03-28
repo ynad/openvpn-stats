@@ -269,7 +269,7 @@ def parse_status(status_content: list, mute: bool) -> None:
         for cname, client in clients_list.items():
             res, msg = mongo_client.connection_log(client)
             if not mute:
-                print(f"DB update connection_log: {res}, notice: {msg}")
+                print(f"DB update connection_log: {res}, notice: {msg}\n")
 
     except Exception as exc:
         print(f"Error on db operation, connection_log data may not be recorded: {str(exc)}")
